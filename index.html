@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Community Membership Survey</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 15px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 20px;
+            margin-bottom: 5px;
+            line-height: 1.3;
+        }
+
+        .header p {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .progress-bar {
+            background: rgba(255,255,255,0.3);
+            height: 4px;
+            position: relative;
+        }
+
+        .progress-fill {
+            background: white;
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .content {
+            padding: 15px;
+            padding-bottom: 80px;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .intro-page {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .intro-page h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 22px;
+        }
+
+        .intro-page p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 12px;
+            font-size: 15px;
+        }
+
+        .villa-input {
+            margin: 25px 0;
+        }
+
+        .villa-input label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .villa-input input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.2s;
+        }
+
+        .villa-input input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .choice-set {
+            margin-bottom: 30px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border: 2px solid #e0e0e0;
+        }
+
+        .choice-set h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .option-card {
+            background: white;
+            border: 3px solid #ddd;
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            min-height: 60px;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .option-card:active {
+            transform: scale(0.98);
+        }
+
+        .option-card.selected {
+            border-color: #667eea;
+            background: #f0f4ff;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+        }
+
+        .option-card input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .radio-custom {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #ddd;
+            border-radius: 50%;
+            margin-right: 12px;
+            flex-shrink: 0;
+            position: relative;
+            transition: all 0.2s;
+            margin-top: 2px;
+        }
+
+        .option-card.selected .radio-custom {
+            border-color: #667eea;
+            background: #667eea;
+        }
+
+        .option-card.selected .radio-custom::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .option-content {
+            flex: 1;
+        }
+
+        .option-label {
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 8px;
+            display: block;
+            font-size: 16px;
+        }
+
+        .option-details {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .option-details div {
+            margin-bottom: 4px;
+        }
+
+        .option-details strong {
+            color: #333;
+            font-weight: 600;
+        }
+
+        .none-option {
+            margin-top: 12px;
+            padding: 15px;
+            background: #fff3cd;
+            border: 3px solid #ffc107;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            transition: all 0.2s;
+        }
+
+        .none-option:active {
+            transform: scale(0.98);
+        }
+
+        .none-option.selected {
+            border-color: #ff9800;
+            background: #ffe0b2;
+            box-shadow: 0 2px 8px rgba(255, 152, 0, 0.2);
+        }
+
+        .none-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .none-option .radio-custom {
+            border-color: #ffc107;
+        }
+
+        .none-option.selected .radio-custom {
+            border-color: #ff9800;
+            background: #ff9800;
+        }
+
+        .none-label {
+            font-weight: 600;
+            color: #856404;
+            font-size: 15px;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            z-index: 99;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            touch-action: manipulation;
+        }
+
+        .btn:active:not(:disabled) {
+            transform: scale(0.96);
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+            flex: 0.8;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .error {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 8px;
+            font-weight: 500;
+        }
+
+        .thank-you {
+            text-align: center;
+            padding: 30px 20px;
+        }
+
+        .thank-you h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+
+        .thank-you p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 12px;
+            font-size: 15px;
+        }
+
+        .success-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+
+        .loader {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                max-width: 900px;
+                margin: 20px auto;
+                border-radius: 12px;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+                overflow: hidden;
+                min-height: auto;
+            }
+
+            .header {
+                position: static;
+                padding: 30px 20px;
+            }
+
+            .header h1 {
+                font-size: 28px;
+                margin-bottom: 10px;
+            }
+
+            .header p {
+                font-size: 14px;
+            }
+
+            .content {
+                padding: 30px;
+                padding-bottom: 30px;
+            }
+
+            .navigation {
+                position: static;
+                box-shadow: none;
+                padding: 0;
+                margin-top: 30px;
+                padding-top: 20px;
+                border-top: 2px solid #e0e0e0;
+            }
+
+            .btn {
+                flex: initial;
+            }
+
+            .btn-secondary {
+                flex: initial;
+            }
+
+            .options-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Community Membership Survey</h1>
+            <p>Help us understand your preferences</p>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <div class="content">
+            <!-- Intro Page -->
+            <div class="page active" id="page0">
+                <div class="intro-page">
+                    <h2>Welcome! 👋</h2>
+                    <p>Thank you for participating in our membership preference survey.</p>
+                    <p>You will be shown <strong>16 choice sets across 4 pages</strong>. Each set presents 3 membership options.</p>
+                    <p>Simply tap your preferred option in each set, or choose "None" if you don't like any.</p>
+                    <p><strong>⏱️ Takes about 5-10 minutes</strong></p>
+                    
+                    <div class="villa-input">
+                        <label for="villaNumber">Enter your Villa Number:</label>
+                        <input type="text" id="villaNumber" placeholder="e.g., Villa 101" required autocomplete="off">
+                        <div class="error" id="villaError"></div>
+                    </div>
+                </div>
+                
+                <div class="navigation">
+                    <div></div>
+                    <button class="btn btn-primary" onclick="startSurvey()">Start Survey →</button>
+                </div>
+            </div>
+
+            <!-- Survey Pages 1-4 -->
+            <div class="page" id="page1"></div>
+            <div class="page" id="page2"></div>
+            <div class="page" id="page3"></div>
+            <div class="page" id="page4"></div>
+
+            <!-- Thank You Page -->
+            <div class="page" id="page5">
+                <div class="thank-you">
+                    <div class="success-icon">✅</div>
+                    <h2>Thank You!</h2>
+                    <p>Your responses have been submitted successfully.</p>
+                    <p>Your input will help us design better membership packages for our community.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // IMPORTANT: Replace this URL with your Google Apps Script Web App URL
+        const SCRIPT_URL = 'YOUR_GOOGLE_SCRIPT_URL_HERE';
+        
+        const choiceSets = [
+            { set: 1, options: [
+                { id: 'A', facilities: 'Gym Only', packageType: 'Individual', timings: 'Morning & Evening Only', guestAccess: 'Not Allowed' },
+                { id: 'B', facilities: 'Swimming Pool Only', packageType: 'Couple', timings: 'Extended Hours', guestAccess: 'Allowed at ₹200/visit' },
+                { id: 'C', facilities: 'Gym + Swimming Pool', packageType: 'Family', timings: 'All Day Access', guestAccess: '2 Free passes/month' }
+            ]},
+            { set: 2, options: [
+                { id: 'A', facilities: 'Badminton Court Only', packageType: 'Family', timings: 'All Day Access', guestAccess: 'Allowed at ₹200/visit' },
+                { id: 'B', facilities: 'Gym + Badminton Court', packageType: 'Individual', timings: 'Morning & Evening Only', guestAccess: '2 Free passes/month' },
+                { id: 'C', facilities: 'Swimming Pool + Badminton Court', packageType: 'Couple', timings: 'Extended Hours', guestAccess: 'Not Allowed' }
+            ]},
+            { set: 3, options: [
+                { id: 'A', facilities: 'Gym + Swimming Pool', packageType: 'Couple', timings: 'Extended Hours', guestAccess: 'Not Allowed' },
+                { id: 'B', facilities: 'All Facilities', packageType: 'Individual', timings: 'All Day Access', guestAccess: '2 Free passes/month' },
+                { id: 'C', facilities: 'Gym Only', packageType: 'Family', timings: 'Morning & Evening Only', guestAccess: 'Allowed at ₹200/visit' }
+            ]},
+            { set: 4, options: [
+                { id: 'A', facilities: 'Swimming Pool Only', packageType: 'Individual', timings: 'All Day Access', guestAccess: '2 Free passes/month' },
+                { id: 'B', facilities: 'Gym + Swimming Pool + Badminton', packageType: 'Couple', timings: 'Morning & Evening Only', guestAccess: 'Not Allowed' },
+                { id: 'C', facilities: 'Badminton Court Only', packageType: 'Family', timings: 'Extended Hours', guestAccess: 'Allowed at ₹200/visit' }
+            ]},
+            { set: 5, options: [
+                { id: 'A', facilities: 'Gym + Badminton Court', packageType: 'Family', timings: 'Morning & Evening Only', guestAccess: 'Allowed at ₹200/visit' },
+                { id: 'B', facilities: 'Swimming Pool Only', packageType: 'Individual', timings: 'Extended Hours', guestAccess: 'Not Allowed' },
+                { id: 'C', facilities: 'All Facilities', packageType: 'Couple', timings: 'All Day Access', guestAccess: '2 Free passes/month' }
+            ]},
+            { set: 6, options: [
+                { id: 'A', facilities: 'All Facilities', packageType: 'Individual', timings: 'Extended Hours', guestAccess: 'Allowed at ₹200/visit' },
+                { id: 'B', facilities: 'Gym + Swimming Pool', packageType: 'Family', timings: 'All Day Access', guestAccess: 'Not Allowed' },
+                { id: 'C', facilities: 'Swimming Pool + Badminton Court', packageType: 'Couple', timings: 'Morning & Evening Only', guestAccess: '2 Free passes/month' }
+            ]},
+            { set: 7, options: [
+                { id: 'A', facilities: 'Gym Only', packageType: 'Couple', timings: 'All Day Access', guestAccess: '2 Free passes/month' },
+                { id: 'B', facilities: 'Badminton Court Only', packageType: 'Individual', timings: 'Morning & Evening Only', guestAccess: 'Allowed at ₹200/visit' },
+                { id: 'C', facilities: 'Gym + Swimming Pool + Badminton', packageType: 'Family', timings: 'Extended Hours', guestAccess: 'Not Allowed' }
+            ]},
+            { set: 8, options: [
+                { id: 'A', facilities: 'Swimming Pool + Badminton Court', packageType: 'Family', timings: 'Morning & Evening Only', guestAccess: 'Not Allowed' },
+                { id: 'B', facilities: 'Gym + Badminton Court', packageType: 'Couple', timings: 'All Day Access', guestAccess: 'Allowed at ₹200/visit' },
+                { id: 'C', facilities: 'All Facilities', packageType: 'Individual', timings: 'Extended Hours', guestAccess: '2 Free passes/month' }
+            ]},
+            { set: 9, options: [
+                { id: 'A', facilities: 'Gym + Swimming Pool', packageType: 'Individual', timings: 'Extended Hours', guestAccess: '2 Free passes/month' },
+                { id: 'B', facilities: 'Gym Only', packageType: 'Family', timings: 'All Day Access', guestAccess: 'Not Allowed' },
+                { id: 'C', facilities: 'Swimming Pool Only', packageType: 'Couple', timings: 'Morning & Evening Only', guestAccess: 'Allowed at ₹200/visit' }
+            ]},
+            { set: 10, options: [
+                { id: 'A', facilities: 'Badminton Court Only', packageType: 'Couple', timings: 'Extended Hours', guestAccess: 'Not Allowed' },
+                { id: 'B', facilities: 'Gym + Swimming Pool + Badminton', packageType: 'Individual', timings: 'All Day Access', guestAccess: 'Allowed at ₹200/visit' },
+                { id: 'C', facilities: 'Gym + Badminton Court', packageType: 'Family', timings: 'Morning & Evening Only', guestAccess: '2 Free passes/month' }
+            ]},
+            { set: 11, options: [
+                { id: 'A', facilities: 'All Facilities', packageType: 'Family', timings: 'All Day Access', guestAccess: 'Not Allowed' },
+                { id: 'B', facilities: 'Swimming Pool + Badminton Court', packageType: 'Individual', timings: 'Morning & Evening Only', guestAccess: 'Allowed at ₹200/visit' },
+                { id: 'C', facilities: 'Gym Only', packageType: 'Couple', timings: 'Extended Hours', guestAccess: '2 Free passes/month' }
+            ]},
+            { set: 12, options: [
+                { id: 'A', facilities: 'Gym + Swimming Pool', packageType: 'Couple', timings: 'Morning & Evening Only', guestAccess: 'Allowed at ₹200/visit' },
+                { id: 'B', facilities: 'Badminton Court Only', packageType: 'Family', timings: 'Extended Hours', guestAccess: '2 Free passes/month' },
+                { id: 'C', facilities: 'Swimming Pool Only', packageType: 'Individual', timings: 'All Day Access', guestAccess: 'Not Allowed' }
+            ]},
+            { set: 13, options: [
+                { id: 'A', facilities: 'Gym + Badminton Court', packageType: 'Individual', timings: 'All Day Access', guestAccess: '2 Free passes/month' },
+                { id: 'B', facilities: 'All Facilities', packageType: 'Couple', timings: 'Morning & Evening Only', guestAccess: 'Not Allowed' },
+                { id: 'C', facilities: 'Gym + Swimming Pool + Badminton', packageType: 'Family', timings: 'Extended Hours', guestAccess: 'Allowed at ₹200/visit' }
+            ]},
+            { set: 14, options: [
+                { id: 'A', facilities: 'Swimming Pool Only', packageType: 'Family', timings: 'Extended Hours', guestAccess: 'Not Allowed' },
+                { id: 'B', facilities: 'Gym Only', packageType: 'Individual', timings: 'All Day Access', guestAccess: 'Allowed at ₹200/visit' },
+                { id: 'C', facilities: 'Swimming Pool + Badminton Court', packageType: 'Couple', timings: 'Morning & Evening Only', guestAccess: '2 Free passes/month' }
+            ]},
+            { set: 15, options: [
+                { id: 'A', facilities: 'Gym + Swimming Pool + Badminton', packageType: 'Couple', timings: 'All Day Access', guestAccess: 'Not Allowed' },
+                { id: 'B', facilities: 'Gym + Swimming Pool', packageType: 'Individual', timings: 'Morning & Evening Only', guestAccess: '2 Free passes/month' },
+                { id: 'C', facilities: 'Badminton Court Only', packageType: 'Family', timings: 'Extended Hours', guestAccess: 'Allowed at ₹200/visit' }
+            ]},
+            { set: 16, options: [
+                { id: 'A', facilities: 'All Facilities', packageType: 'Individual', timings: 'Morning & Evening Only', guestAccess: 'Not Allowed' },
+                { id: 'B', facilities: 'Gym + Badminton Court', packageType: 'Couple', timings: 'Extended Hours', guestAccess: 'Allowed at ₹200/visit' },
+                { id: 'C', facilities: 'Swimming Pool Only', packageType: 'Family', timings: 'All Day Access', guestAccess: '2 Free passes/month' }
+            ]}
+        ];
+
+        let currentPage = 0;
+        let responses = {};
+        let villaNumber = '';
+
+        function startSurvey() {
+            villaNumber = document.getElementById('villaNumber').value.trim();
+            if (!villaNumber) {
+                document.getElementById('villaError').textContent = 'Please enter your villa number';
+                return;
+            }
+            document.getElementById('villaError').textContent = '';
+            
+            generateSurveyPages();
+            goToPage(1);
+        }
+
+        function generateSurveyPages() {
+            const setsPerPage = 4;
+            
+            for (let pageNum = 1; pageNum <= 4; pageNum++) {
+                const startIdx = (pageNum - 1) * setsPerPage;
+                const endIdx = startIdx + setsPerPage;
+                const pageSets = choiceSets.slice(startIdx, endIdx);
+                
+                let html = '';
+                pageSets.forEach(choiceSet => {
+                    html += `
+                        <div class="choice-set">
+                            <h3>Choice Set ${choiceSet.set} of 16</h3>
+                            <div class="options-grid">
+                                ${choiceSet.options.map(option => `
+                                    <div class="option-card" onclick="selectOption(${choiceSet.set}, '${option.id}')">
+                                        <input type="radio" name="set${choiceSet.set}" value="${option.id}" id="set${choiceSet.set}_${option.id}">
+                                        <div class="radio-custom"></div>
+                                        <div class="option-content">
+                                            <span class="option-label">Option ${option.id}</span>
+                                            <div class="option-details">
+                                                <div><strong>Facilities:</strong> ${option.facilities}</div>
+                                                <div><strong>Package:</strong> ${option.packageType}</div>
+                                                <div><strong>Timings:</strong> ${option.timings}</div>
+                                                <div><strong>Guest Access:</strong> ${option.guestAccess}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <div class="none-option" onclick="selectOption(${choiceSet.set}, 'None')">
+                                <input type="radio" name="set${choiceSet.set}" value="None" id="set${choiceSet.set}_None">
+                                <div class="radio-custom"></div>
+                                <span class="none-label">None - I don't prefer any of these options</span>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += `
+                    <div class="navigation">
+                        ${pageNum > 1 ? `<button class="btn btn-secondary" onclick="goToPage(${pageNum - 1})">← Previous</button>` : '<div></div>'}
+                        ${pageNum < 4 ? 
+                            `<button class="btn btn-primary" onclick="validateAndNext(${pageNum})">Next →</button>` :
+                            `<button class="btn btn-primary" id="submitBtn" onclick="submitSurvey()">Submit</button>`
+                        }
+                    </div>
+                `;
+                
+                document.getElementById(`page${pageNum}`).innerHTML = html;
+            }
+        }
+
+        function selectOption(setNumber, optionId) {
+            responses[setNumber] = optionId;
+            
+            const radioInput = document.getElementById(`set${setNumber}_${optionId}`);
+            if (radioInput) {
+                radioInput.checked = true;
+            }
+            
+            document.querySelectorAll(`input[name="set${setNumber}"]`).forEach(radio => {
+                radio.closest('.option-card, .none-option').classList.remove('selected');
+            });
+            
+            const selectedCard = document.getElementById(`set${setNumber}_${optionId}`);
+            if (selectedCard) {
+                selectedCard.closest('.option-card, .none-option').classList.add('selected');
+            }
+        }
+
+        function validateAndNext(pageNum) {
+            const setsPerPage = 4;
+            const startSet = (pageNum - 1) * setsPerPage + 1;
+            const endSet = startSet + setsPerPage;
+            
+            let allAnswered = true;
+            for (let i = startSet; i < endSet; i++) {
+                if (!responses[i]) {
+                    allAnswered = false;
+                    break;
+                }
+            }
+            
+            if (!allAnswered) {
+                alert('Please answer all questions on this page before continuing.');
+                return;
+            }
+            
+            goToPage(pageNum + 1);
+            window.scrollTo(0, 0);
+        }
+
+        function goToPage(pageNum) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(`page${pageNum}`).classList.add('active');
+            currentPage = pageNum;
+            
+            const progress = (pageNum / 5) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        async function submitSurvey() {
+            if (Object.keys(responses).length < 16) {
+                alert('Please answer all questions before submitting.');
+                return;
+            }
+            
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="loader"></span> Submitting...';
+            
+            const timestamp = new Date().toISOString();
+            
+            const surveyData = {
+                villaNumber: villaNumber,
+                timestamp: timestamp,
+                ...responses
+            };
+            
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(surveyData)
+                });
+                
+                goToPage(5);
+                window.scrollTo(0, 0);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('There was an error submitting your response. Please try again.');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit';
+            }
+        }
+
+        updateProgress();
+        function updateProgress() {
+            const progress = (currentPage / 5) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+    </script>
+</body>
+</html>
