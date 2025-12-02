@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="RSV Club House Survey - Help us understand your preferences">
+    <meta name="theme-color" content="#4A5568">
+    <title>RSV Club House Survey</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.95;
+            font-size: 1.1em;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section h2 {
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #4a5568;
+            font-weight: 600;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="tel"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .choice-set {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .choice-set h3 {
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .option-card {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .option-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+        }
+
+        .option-card.selected {
+            border-color: #667eea;
+            background: #f0f4ff;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.25);
+        }
+
+        .option-card input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .option-detail {
+            margin: 8px 0;
+            font-size: 0.95em;
+        }
+
+        .option-detail strong {
+            color: #4a5568;
+        }
+
+        .price-tag {
+            background: #667eea;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 10px;
+            font-size: 1.1em;
+        }
+
+        .none-option {
+            text-align: center;
+            padding: 15px;
+        }
+
+        .none-option input[type="radio"] {
+            margin-right: 8px;
+            width: 18px;
+            height: 18px;
+        }
+
+        .none-option label {
+            display: inline;
+            cursor: pointer;
+            font-weight: normal;
+        }
+
+        .competitor-section {
+            background: #fff5f5;
+            border: 2px solid #feb2b2;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .competitor-section h3 {
+            color: #c53030;
+            margin-bottom: 15px;
+        }
+
+        .radio-group {
+            margin: 15px 0;
+        }
+
+        .radio-group label {
+            display: block;
+            margin: 10px 0;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .radio-group label:hover {
+            background: #fff;
+        }
+
+        .radio-group input[type="radio"] {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+        }
+
+        .competitor-input {
+            margin-top: 15px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 20px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .progress {
+            background: #e2e8f0;
+            height: 8px;
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            transition: width 0.3s;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .alert-success {
+            background: #c6f6d5;
+            border: 2px solid #48bb78;
+            color: #22543d;
+        }
+
+        .alert-error {
+            background: #fed7d7;
+            border: 2px solid #f56565;
+            color: #742a2a;
+        }
+
+        .footer {
+            background: #2d3748;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 1.5em;
+            }
+
+            .content {
+                padding: 20px;
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .info-box {
+            background: #e6fffa;
+            border: 2px solid #4fd1c5;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .info-box strong {
+            color: #234e52;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏊‍♂️ RSV Club House Survey</h1>
+            <p>Help us understand your club membership preferences</p>
+        </div>
+
+        <div class="content">
+            <div id="alertContainer"></div>
+
+            <!-- Personal Information Section -->
+            <div class="section">
+                <h2>📋 Your Information</h2>
+                <div class="form-group">
+                    <label for="name">Full Name *</label>
+                    <input type="text" id="name" required placeholder="Enter your full name">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address *</label>
+                    <input type="email" id="email" required placeholder="your.email@example.com">
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" placeholder="+91 XXXXX XXXXX">
+                </div>
+                <div class="form-group">
+                    <label for="location">Your Location</label>
+                    <input type="text" id="location" placeholder="e.g., HSR Layout, Bangalore">
+                </div>
+            </div>
+
+            <!-- Competitor Analysis Section -->
+            <div class="section">
+                <h2>🏢 Competitor Analysis</h2>
+                <div class="competitor-section">
+                    <h3>Do you have access to other club houses within 1 km or nearby?</h3>
+                    <div class="radio-group">
+                        <label>
+                            <input type="radio" name="hasCompetitor" value="yes" onclick="showCompetitorDetails()">
+                            Yes, I have access to other club houses
+                        </label>
+                        <label>
+                            <input type="radio" name="hasCompetitor" value="no" onclick="hideCompetitorDetails()">
+                            No, RSV is the only option nearby
+                        </label>
+                        <label>
+                            <input type="radio" name="hasCompetitor" value="not_sure" onclick="hideCompetitorDetails()">
+                            Not sure / Need to check
+                        </label>
+                    </div>
+
+                    <div id="competitorDetails" class="hidden">
+                        <div class="competitor-input">
+                            <label for="competitorName">Name of the club house(s):</label>
+                            <input type="text" id="competitorName" placeholder="e.g., XYZ Club, ABC Sports Complex">
+                        </div>
+                        <div class="competitor-input">
+                            <label for="competitorDistance">Approximate distance from your home:</label>
+                            <select id="competitorDistance">
+                                <option value="">Select distance</option>
+                                <option value="less_500m">Less than 500 meters</option>
+                                <option value="500m_1km">500 meters - 1 km</option>
+                                <option value="1km_2km">1 - 2 km</option>
+                                <option value="2km_plus">More than 2 km</option>
+                            </select>
+                        </div>
+                        <div class="competitor-input">
+                            <label for="competitorMember">Are you currently a member there?</label>
+                            <div class="radio-group">
+                                <label>
+                                    <input type="radio" name="competitorMember" value="yes">
+                                    Yes, I'm a current member
+                                </label>
+                                <label>
+                                    <input type="radio" name="competitorMember" value="was">
+                                    Was a member before
+                                </label>
+                                <label>
+                                    <input type="radio" name="competitorMember" value="no">
+                                    No, never been a member
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <strong>Why we ask:</strong> Understanding your access to alternatives helps us gauge the importance of having RSV Club House nearby and tailor our offerings to meet your needs better.
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="progress">
+                <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+            </div>
+
+            <!-- Choice Sets Section -->
+            <div class="section">
+                <h2>💡 Package Preferences</h2>
+                <p style="margin-bottom: 20px; color: #4a5568;">
+                    Please review each choice set carefully and select your preferred option. Prices are calculated based on RSV Club House monthly rates plus taxes.
+                </p>
+                <div id="choiceSets"></div>
+            </div>
+
+            <button class="btn" onclick="submitSurvey()">Submit Survey</button>
+        </div>
+
+        <div class="footer">
+            <p>© 2025 RSV Club House Survey</p>
+            <p style="margin-top: 5px; font-size: 0.85em;">Your responses will be kept confidential</p>
+        </div>
+    </div>
+
+    <script>
+        // RSV Club House Pricing Structure (Monthly + 18% GST)
+        const pricing = {
+            'Gym Only': 1180, // 1000 + 18%
+            'Swimming Pool Only': 1180, // 1000 + 18%
+            'Badminton Court Only': 1770, // 1500 + 18%
+            'Gym + Swimming Pool': 2360, // Combined
+            'Gym + Badminton Court': 2950, // Combined
+            'Swimming Pool + Badminton Court': 2950, // Combined
+            'Gym + Swimming Pool + Badminton': 3540, // Combined
+            'All Facilities': 4130 // All combined
+        };
+
+        // Guest access pricing
+        const guestPricing = {
+            'Not Allowed': 'Not Allowed',
+            'Allowed at ₹200/visit': '₹200/visit',
+            '2 Free passes/month': '2 Free/month'
+        };
+
+        // Choice sets data
+        const choiceSets = [
+            {
+                "id": 1,
+                "options": [
+                    {
+                        "facilities": "Gym Only",
+                        "packageType": "Individual",
+                        "timings": "Morning & Evening Only",
+                        "guestAccess": "Not Allowed"
+                    },
+                    {
+                        "facilities": "Swimming Pool Only",
+                        "packageType": "Couple",
+                        "timings": "Extended Hours",
+                        "guestAccess": "Allowed at ₹200/visit"
+                    },
+                    {
+                        "facilities": "Gym + Swimming Pool",
+                        "packageType": "Family",
+                        "timings": "All Day Access",
+                        "guestAccess": "2 Free passes/month"
+                    }
+                ]
+            },
+            {
+                "id": 2,
+                "options": [
+                    {
+                        "facilities": "Badminton Court Only",
+                        "packageType": "Family",
+                        "timings": "All Day Access",
+                        "guestAccess": "Allowed at ₹200/visit"
+                    },
+                    {
+                        "facilities": "Gym + Badminton Court",
+                        "packageType": "Individual",
+                        "timings": "Morning & Evening Only",
+                        "guestAccess": "2 Free passes/month"
+                    },
+                    {
+                        "facilities": "Swimming Pool + Badminton Court",
+                        "packageType": "Couple",
+                        "timings": "Extended Hours",
+                        "guestAccess": "Not Allowed"
+                    }
+                ]
+            },
+            {
+                "id": 3,
+                "options": [
+                    {
+                        "facilities": "Gym + Swimming Pool",
+                        "packageType": "Couple",
+                        "timings": "Extended Hours",
+                        "guestAccess": "Not Allowed"
+                    },
+                    {
+                        "facilities": "All Facilities",
+                        "packageType": "Individual",
+                        "timings": "All Day Access",
+                        "guestAccess": "2 Free passes/month"
+                    },
+                    {
+                        "facilities": "Gym Only",
+                        "packageType": "Family",
+                        "timings": "Morning & Evening Only",
+                        "guestAccess": "Allowed at ₹200/visit"
+                    }
+                ]
+            },
+            {
+                "id": 4,
+                "options": [
+                    {
+                        "facilities": "Swimming Pool Only",
+                        "packageType": "Individual",
+                        "timings": "All Day Access",
+                        "guestAccess": "2 Free passes/month"
+                    },
+                    {
+                        "facilities": "Gym + Swimming Pool + Badminton",
+                        "packageType": "Couple",
+                        "timings": "Morning & Evening Only",
+                        "guestAccess": "Not Allowed"
+                    },
+                    {
+                        "facilities": "Badminton Court Only",
+                        "packageType": "Family",
+                        "timings": "Extended Hours",
+                        "guestAccess": "Allowed at ₹200/visit"
+                    }
+                ]
+            },
+            {
+                "id": 5,
+                "options": [
+                    {
+                        "facilities": "Gym + Badminton Court",
+                        "packageType": "Family",
+                        "timings": "Morning & Evening Only",
+                        "guestAccess": "Allowed at ₹200/visit"
+                    },
+                    {
+                        "facilities": "Swimming Pool Only",
+                        "packageType": "Individual",
+                        "timings": "Extended Hours",
+                        "guestAccess": "Not Allowed"
+                    },
+                    {
+                        "facilities": "All Facilities",
+                        "packageType": "Couple",
+                        "timings": "All Day Access",
+                        "guestAccess": "2 Free passes/month"
+                    }
+                ]
+            },
+            {
+                "id": 6,
+                "options": [
+                    {
+                        "facilities": "All Facilities",
+                        "packageType": "Individual",
+                        "timings": "Extended Hours",
+                        "guestAccess": "Allowed at ₹200/visit"
+                    },
+                    {
+                        "facilities": "Gym + Swimming Pool",
+                        "packageType": "Family",
+                        "timings": "All Day Access",
+                        "guestAccess": "Not Allowed"
+                    },
+                    {
+                        "facilities": "Swimming Pool + Badminton Court",
+                        "packageType": "Couple",
+                        "timings": "Morning & Evening Only",
+                        "guestAccess": "2 Free passes/month"
+                    }
+                ]
+            },
+            {
+                "id": 7,
+                "options": [
+                    {
+                        "facilities": "Gym Only",
+                        "packageType": "Couple",
+                        "timings": "All Day Access",
+                        "guestAccess": "2 Free passes/month"
+                    },
+                    {
+                        "facilities": "Badminton Court Only",
+                        "packageType": "Individual",
+                        "timings": "Morning & Evening Only",
+                        "guestAccess": "Allowed at ₹200/visit"
+                    },
+                    {
+                        "facilities": "Gym + Swimming Pool + Badminton",
+                        "packageType": "Family",
+                        "timings": "Extended Hours",
+                        "guestAccess": "Not Allowed"
+                    }
+                ]
+            },
+            {
+                "id": 8,
+                "options": [
+                    {
+                        "facilities": "Swimming Pool + Badminton Court",
+                        "packageType": "Family",
+                        "timings": "Morning & Evening Only",
+                        "guestAccess": "Not Allowed"
+                    },
+                    {
+                        "facilities": "Gym + Badminton Court",
+                        "packageType": "Couple",
+                        "timings": "All Day Access",
+                        "guestAccess": "Allowed at ₹200/visit"
+                    },
+                    {
+                        "facilities": "All Facilities",
+                        "packageType": "Individual",
+                        "timings": "Extended Hours",
+                        "guestAccess": "2 Free passes/month"
+                    }
+                ]
+            },
+            {
+                "id": 9,
+                "options": [
+                    {
+                        "facilities": "Gym + Swimming Pool",
+                        "packageType": "Individual",
+                        "timings": "Extended Hours",
+                        "guestAccess": "2 Free passes/month"
+                    },
+                    {
+                        "facilities": "Gym Only",
+                        "packageType": "Family",
+                        "timings": "All Day Access",
+                        "guestAccess": "Not Allowed"
+                    },
+                    {
+                        "facilities": "Swimming Pool Only",
+                        "packageType": "Couple",
+                        "timings": "Morning & Evening Only",
+                        "guestAccess": "Allowed at ₹200/visit"
+                    }
+                ]
+            },
+            {
+                "id": 10,
+                "options": [
+                    {
+                        "facilities": "Badminton Court Only",
+                        "packageType": "Couple",
+                        "timings": "Extended Hours",
+                        "guestAccess": "Not Allowed"
+                    },
+                    {
+                        "facilities": "Gym + Swimming Pool + Badminton",
+                        "packageType": "Individual",
+                        "timings": "All Day Access",
+                        "guestAccess": "Allowed at ₹200/visit"
+                    },
+                    {
+                        "facilities": "Gym + Badminton Court",
+                        "packageType": "Family",
+                        "timings": "Morning & Evening Only",
+                        "guestAccess": "2 Free passes/month"
+                    }
+                ]
+            },
+            {
+                "id": 11,
+                "options": [
+                    {
+                        "facilities": "All Facilities",
+                        "packageType": "Family",
+                        "timings": "All Day Access",
+                        "guestAccess": "Not Allowed"
+                    },
+                    {
+                        "facilities": "Swimming Pool + Badminton Court",
+                        "packageType": "Individual",
+                        "timings": "Morning & Evening Only",
+                        "guestAccess": "Allowed at ₹200/visit"
+                    },
+                    {
+                        "facilities": "Gym Only",
+                        "packageType": "Couple",
+                        "timings": "Extended Hours",
+                        "guestAccess": "2 Free passes/month"
+                    }
+                ]
+            },
+            {
+                "id": 12,
+                "options": [
+                    {
+                        "facilities": "Gym + Swimming Pool",
+                        "packageType": "Couple",
+                        "timings": "Morning & Evening Only",
+                        "guestAccess": "Allowed at ₹200/visit"
+                    },
+                    {
+                        "facilities": "Badminton Court Only",
+                        "packageType": "Family",
+                        "timings": "Extended Hours",
+                        "guestAccess": "2 Free passes/month"
+                    },
+                    {
+                        "facilities": "Swimming Pool Only",
+                        "packageType": "Individual",
+                        "timings": "All Day Access",
+                        "guestAccess": "Not Allowed"
+                    }
+                ]
+            },
+            {
+                "id": 13,
+                "options": [
+                    {
+                        "facilities": "Gym + Badminton Court",
+                        "packageType": "Individual",
+                        "timings": "All Day Access",
+                        "guestAccess": "2 Free passes/month"
+                    },
+                    {
+                        "facilities": "All Facilities",
+                        "packageType": "Couple",
+                        "timings": "Morning & Evening Only",
+                        "guestAccess": "Not Allowed"
+                    },
+                    {
+                        "facilities": "Gym + Swimming Pool + Badminton",
+                        "packageType": "Family",
+                        "timings": "Extended Hours",
+                        "guestAccess": "Allowed at ₹200/visit"
+                    }
+                ]
+            },
+            {
+                "id": 14,
+                "options": [
+                    {
+                        "facilities": "Swimming Pool Only",
+                        "packageType": "Family",
+                        "timings": "Extended Hours",
+                        "guestAccess": "Not Allowed"
+                    },
+                    {
+                        "facilities": "Gym Only",
+                        "packageType": "Individual",
+                        "timings": "All Day Access",
+                        "guestAccess": "Allowed at ₹200/visit"
+                    },
+                    {
+                        "facilities": "Swimming Pool + Badminton Court",
+                        "packageType": "Couple",
+                        "timings": "Morning & Evening Only",
+                        "guestAccess": "2 Free passes/month"
+                    }
+                ]
+            },
+            {
+                "id": 15,
+                "options": [
+                    {
+                        "facilities": "Gym + Swimming Pool + Badminton",
+                        "packageType": "Couple",
+                        "timings": "All Day Access",
+                        "guestAccess": "Not Allowed"
+                    },
+                    {
+                        "facilities": "Gym + Swimming Pool",
+                        "packageType": "Individual",
+                        "timings": "Morning & Evening Only",
+                        "guestAccess": "2 Free passes/month"
+                    },
+                    {
+                        "facilities": "Badminton Court Only",
+                        "packageType": "Family",
+                        "timings": "Extended Hours",
+                        "guestAccess": "Allowed at ₹200/visit"
+                    }
+                ]
+            },
+            {
+                "id": 16,
+                "options": [
+                    {
+                        "facilities": "All Facilities",
+                        "packageType": "Individual",
+                        "timings": "Morning & Evening Only",
+                        "guestAccess": "Not Allowed"
+                    },
+                    {
+                        "facilities": "Gym + Badminton Court",
+                        "packageType": "Couple",
+                        "timings": "Extended Hours",
+                        "guestAccess": "Allowed at ₹200/visit"
+                    },
+                    {
+                        "facilities": "Swimming Pool Only",
+                        "packageType": "Family",
+                        "timings": "All Day Access",
+                        "guestAccess": "2 Free passes/month"
+                    }
+                ]
+            }
+        ];
+
+        // Function to calculate price based on facilities
+        function calculatePrice(facilities) {
+            return pricing[facilities] || 0;
+        }
+
+        // Function to render choice sets
+        function renderChoiceSets() {
+            const container = document.getElementById('choiceSets');
+            container.innerHTML = '';
+
+            choiceSets.forEach((set, index) => {
+                const setDiv = document.createElement('div');
+                setDiv.className = 'choice-set';
+                setDiv.innerHTML = `
+                    <h3>Choice Set ${set.id} of 16</h3>
+                    <div class="options-grid">
+                        ${set.options.map((option, optIndex) => {
+                            const price = calculatePrice(option.facilities);
+                            return `
+                                <div class="option-card" onclick="selectOption(${index}, '${String.fromCharCode(65 + optIndex)}')">
+                                    <input type="radio" name="choice_${set.id}" value="${String.fromCharCode(65 + optIndex)}" id="choice_${set.id}_${String.fromCharCode(65 + optIndex)}">
+                                    <div style="font-weight: bold; color: #667eea; margin-bottom: 10px; font-size: 1.1em;">
+                                        Option ${String.fromCharCode(65 + optIndex)}
+                                    </div>
+                                    <div class="option-detail">
+                                        <strong>🏋️ Facilities:</strong><br>${option.facilities}
+                                    </div>
+                                    <div class="option-detail">
+                                        <strong>👥 Package:</strong> ${option.packageType}
+                                    </div>
+                                    <div class="option-detail">
+                                        <strong>⏰ Timings:</strong> ${option.timings}
+                                    </div>
+                                    <div class="option-detail">
+                                        <strong>🎫 Guest Access:</strong> ${option.guestAccess}
+                                    </div>
+                                    <div class="price-tag">₹${price}/month</div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                    <div class="none-option">
+                        <input type="radio" name="choice_${set.id}" value="None" id="choice_${set.id}_None" onclick="selectOption(${index}, 'None')">
+                        <label for="choice_${set.id}_None" style="font-weight: 600;">None of these options appeal to me</label>
+                    </div>
+                `;
+                container.appendChild(setDiv);
+            });
+        }
+
+        // Function to select an option
+        function selectOption(setIndex, value) {
+            const cards = document.querySelectorAll(`.choice-set:nth-child(${setIndex + 1}) .option-card`);
+            cards.forEach(card => card.classList.remove('selected'));
+
+            if (value !== 'None') {
+                const selectedCard = document.querySelector(`#choice_${choiceSets[setIndex].id}_${value}`).closest('.option-card');
+                selectedCard.classList.add('selected');
+            }
+
+            updateProgress();
+        }
+
+        // Function to update progress bar
+        function updateProgress() {
+            let answered = 0;
+            choiceSets.forEach(set => {
+                const selected = document.querySelector(`input[name="choice_${set.id}"]:checked`);
+                if (selected) answered++;
+            });
+
+            const progress = (answered / choiceSets.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        // Function to show competitor details
+        function showCompetitorDetails() {
+            document.getElementById('competitorDetails').classList.remove('hidden');
+        }
+
+        // Function to hide competitor details
+        function hideCompetitorDetails() {
+            document.getElementById('competitorDetails').classList.add('hidden');
+        }
+
+        // Function to show alert
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alertContainer');
+            alertContainer.innerHTML = `
+                <div class="alert alert-${type}">
+                    ${message}
+                </div>
+            `;
+            setTimeout(() => {
+                alertContainer.innerHTML = '';
+            }, 5000);
+        }
+
+        // Function to validate form
+        function validateForm() {
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+
+            if (!name) {
+                showAlert('Please enter your name', 'error');
+                return false;
+            }
+
+            if (!email) {
+                showAlert('Please enter your email address', 'error');
+                return false;
+            }
+
+            // Validate email format
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showAlert('Please enter a valid email address', 'error');
+                return false;
+            }
+
+            // Check if all choice sets are answered
+            let allAnswered = true;
+            choiceSets.forEach(set => {
+                const selected = document.querySelector(`input[name="choice_${set.id}"]:checked`);
+                if (!selected) {
+                    allAnswered = false;
+                }
+            });
+
+            if (!allAnswered) {
+                showAlert('Please answer all 16 choice sets before submitting', 'error');
+                return false;
+            }
+
+            // Check if competitor question is answered
+            const hasCompetitor = document.querySelector('input[name="hasCompetitor"]:checked');
+            if (!hasCompetitor) {
+                showAlert('Please answer the competitor analysis question', 'error');
+                return false;
+            }
+
+            return true;
+        }
+
+        // Function to collect form data
+        function collectFormData() {
+            const data = {
+                timestamp: new Date().toISOString(),
+                personalInfo: {
+                    name: document.getElementById('name').value.trim(),
+                    email: document.getElementById('email').value.trim(),
+                    phone: document.getElementById('phone').value.trim(),
+                    location: document.getElementById('location').value.trim()
+                },
+                competitorAnalysis: {
+                    hasCompetitor: document.querySelector('input[name="hasCompetitor"]:checked')?.value,
+                    competitorName: document.getElementById('competitorName').value.trim(),
+                    competitorDistance: document.getElementById('competitorDistance').value,
+                    competitorMember: document.querySelector('input[name="competitorMember"]:checked')?.value
+                },
+                choices: []
+            };
+
+            choiceSets.forEach(set => {
+                const selected = document.querySelector(`input[name="choice_${set.id}"]:checked`);
+                if (selected) {
+                    const optionValue = selected.value;
+                    let optionDetails = null;
+
+                    if (optionValue !== 'None') {
+                        const optionIndex = optionValue.charCodeAt(0) - 65;
+                        optionDetails = {
+                            ...set.options[optionIndex],
+                            price: calculatePrice(set.options[optionIndex].facilities)
+                        };
+                    }
+
+                    data.choices.push({
+                        choiceSet: set.id,
+                        selected: optionValue,
+                        optionDetails: optionDetails
+                    });
+                }
+            });
+
+            return data;
+        }
+
+        // Function to generate mailto link
+        function generateMailto(data) {
+            const subject = encodeURIComponent('RSV Club House Survey Response - ' + data.personalInfo.name);
+            
+            let body = `RSV CLUB HOUSE SURVEY RESPONSE
+========================================
+
+RESPONDENT INFORMATION:
+- Name: ${data.personalInfo.name}
+- Email: ${data.personalInfo.email}
+- Phone: ${data.personalInfo.phone || 'Not provided'}
+- Location: ${data.personalInfo.location || 'Not provided'}
+- Submission Time: ${new Date(data.timestamp).toLocaleString()}
+
+COMPETITOR ANALYSIS:
+- Has nearby competitors: ${data.competitorAnalysis.hasCompetitor || 'Not answered'}
+- Competitor name: ${data.competitorAnalysis.competitorName || 'N/A'}
+- Distance: ${data.competitorAnalysis.competitorDistance || 'N/A'}
+- Current member: ${data.competitorAnalysis.competitorMember || 'N/A'}
+
+CHOICE PREFERENCES:
+========================================
+`;
+
+            data.choices.forEach(choice => {
+                body += `\nChoice Set ${choice.choiceSet}: ${choice.selected}`;
+                if (choice.optionDetails) {
+                    body += `
+  - Facilities: ${choice.optionDetails.facilities}
+  - Package: ${choice.optionDetails.packageType}
+  - Timings: ${choice.optionDetails.timings}
+  - Guest Access: ${choice.optionDetails.guestAccess}
+  - Price: ₹${choice.optionDetails.price}/month`;
+                }
+                body += '\n';
+            });
+
+            body += `
+========================================
+END OF SURVEY RESPONSE
+
+This response can be imported into your conjoint analysis software.
+`;
+
+            const mailto = `mailto:rsvowa.562106@gmail.com?subject=${subject}&body=${encodeURIComponent(body)}`;
+            return mailto;
+        }
+
+        // Function to submit survey
+        async function submitSurvey() {
+            if (!validateForm()) {
+                return;
+            }
+
+            const submitButton = document.querySelector('.btn');
+            submitButton.disabled = true;
+            submitButton.textContent = 'Submitting...';
+
+            try {
+                const formData = collectFormData();
+                
+                // Generate mailto link
+                const mailtoLink = generateMailto(formData);
+                
+                // Store data in localStorage for backup
+                localStorage.setItem('rsv_survey_' + Date.now(), JSON.stringify(formData));
+                
+                // Open mailto link
+                window.location.href = mailtoLink;
+                
+                showAlert('Thank you! Your email client should open. Please send the email to complete your submission.', 'success');
+                
+                // Reset form after 3 seconds
+                setTimeout(() => {
+                    if (confirm('Your response has been prepared. Would you like to start a new survey?')) {
+                        location.reload();
+                    }
+                }, 3000);
+
+            } catch (error) {
+                showAlert('An error occurred. Please try again or contact support.', 'error');
+                submitButton.disabled = false;
+                submitButton.textContent = 'Submit Survey';
+            }
+        }
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            renderChoiceSets();
+        });
+
+        // Add install prompt for PWA
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+        });
+    </script>
+</body>
+</html>
