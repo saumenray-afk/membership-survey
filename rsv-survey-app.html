@@ -1,0 +1,1353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="RSV Club House Survey App">
+    <meta name="theme-color" content="#667eea">
+    <title>RSV Club House Survey</title>
+    <link rel="manifest" href="manifest.json">
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        #root {
+            width: 100%;
+        }
+
+        /* Animations */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .animate-slide-in {
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .animate-pulse {
+            animation: pulse 2s infinite;
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        /* App Container */
+        .app-container {
+            max-width: 100%;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .app-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .app-header h1 {
+            font-size: 1.8em;
+            margin-bottom: 5px;
+        }
+
+        .app-header p {
+            opacity: 0.95;
+            font-size: 0.95em;
+        }
+
+        /* Navigation Steps */
+        .nav-steps {
+            background: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 85px;
+            z-index: 99;
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 5px;
+            transition: all 0.3s;
+        }
+
+        .step.active .step-number {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .step.completed .step-number {
+            background: #48bb78;
+            color: white;
+        }
+
+        .step-label {
+            font-size: 0.75em;
+            color: #4a5568;
+            text-align: center;
+        }
+
+        /* Content */
+        .content {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .screen {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            min-height: 400px;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2d3748;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background: #f7fafc;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 16px;
+            background: #f7fafc;
+            cursor: pointer;
+        }
+
+        /* Radio Groups */
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #f7fafc;
+        }
+
+        .radio-option:hover {
+            border-color: #667eea;
+            background: white;
+            transform: translateX(5px);
+        }
+
+        .radio-option input[type="radio"] {
+            margin-right: 12px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .radio-option.selected {
+            border-color: #667eea;
+            background: #f0f4ff;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+        }
+
+        /* Choice Cards */
+        .choice-set-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .choice-set-header h2 {
+            font-size: 1.5em;
+            margin-bottom: 5px;
+        }
+
+        .options-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .option-card {
+            background: #f7fafc;
+            border: 3px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .option-card:hover::before {
+            opacity: 1;
+        }
+
+        .option-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+            border-color: #667eea;
+        }
+
+        .option-card.selected {
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.25);
+            transform: scale(1.02);
+        }
+
+        .option-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .option-detail {
+            margin: 12px 0;
+            font-size: 0.95em;
+            position: relative;
+            z-index: 1;
+        }
+
+        .option-detail-label {
+            font-weight: 600;
+            color: #4a5568;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .option-detail-value {
+            color: #2d3748;
+        }
+
+        .price-badge {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+            padding: 10px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-top: 15px;
+            display: inline-block;
+            box-shadow: 0 4px 10px rgba(72, 187, 120, 0.3);
+        }
+
+        .none-option {
+            text-align: center;
+            padding: 20px;
+            background: #fff5f5;
+            border: 2px dashed #feb2b2;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .none-option:hover {
+            background: #ffe5e5;
+            border-color: #fc8181;
+        }
+
+        .none-option.selected {
+            background: #fed7d7;
+            border-color: #f56565;
+        }
+
+        /* Buttons */
+        .btn-container {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 16px 30px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e0;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* Progress */
+        .progress-container {
+            background: white;
+            padding: 15px 20px;
+            position: sticky;
+            top: 165px;
+            z-index: 98;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .progress-text {
+            text-align: center;
+            margin-bottom: 10px;
+            color: #4a5568;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        .progress-bar-container {
+            background: #e2e8f0;
+            height: 12px;
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            border-radius: 6px;
+            position: relative;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Alert */
+        .alert {
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .alert-success {
+            background: #c6f6d5;
+            border: 2px solid #48bb78;
+            color: #22543d;
+        }
+
+        .alert-error {
+            background: #fed7d7;
+            border: 2px solid #f56565;
+            color: #742a2a;
+        }
+
+        .alert-info {
+            background: #bee3f8;
+            border: 2px solid #4299e1;
+            color: #2c5282;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Success Screen */
+        .success-screen {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .success-icon {
+            font-size: 5em;
+            margin-bottom: 20px;
+            animation: pulse 1.5s infinite;
+        }
+
+        .success-screen h2 {
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-size: 2em;
+        }
+
+        .success-screen p {
+            color: #4a5568;
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .app-header h1 {
+                font-size: 1.4em;
+            }
+
+            .nav-steps {
+                padding: 15px 10px;
+            }
+
+            .step-number {
+                width: 35px;
+                height: 35px;
+            }
+
+            .step-label {
+                font-size: 0.65em;
+            }
+
+            .content {
+                padding: 15px;
+            }
+
+            .screen {
+                padding: 20px;
+            }
+
+            .options-container {
+                grid-template-columns: 1fr;
+            }
+
+            .btn-container {
+                flex-direction: column;
+            }
+
+            .progress-container {
+                top: 140px;
+            }
+        }
+
+        /* Info Box */
+        .info-box {
+            background: linear-gradient(135deg, #e6fffa 0%, #b2f5ea 100%);
+            border: 2px solid #4fd1c5;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .info-box-title {
+            font-weight: bold;
+            color: #234e52;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-box-content {
+            color: #2c7a7b;
+            line-height: 1.6;
+        }
+
+        /* Competitor Section */
+        .competitor-box {
+            background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%);
+            border: 2px solid #feb2b2;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .fade-enter {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        .fade-enter-active {
+            opacity: 1;
+            transform: translateY(0);
+            transition: all 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Pricing data
+        const PRICING = {
+            'Gym Only': 1180,
+            'Swimming Pool Only': 1180,
+            'Badminton Court Only': 1770,
+            'Gym + Swimming Pool': 2360,
+            'Gym + Badminton Court': 2950,
+            'Swimming Pool + Badminton Court': 2950,
+            'Gym + Swimming Pool + Badminton': 3540,
+            'All Facilities': 4130
+        };
+
+        // Choice sets data
+        const CHOICE_SETS = [
+            {
+                "id": 1,
+                "options": [
+                    { "facilities": "Gym Only", "packageType": "Individual", "timings": "Morning & Evening Only", "guestAccess": "Not Allowed" },
+                    { "facilities": "Swimming Pool Only", "packageType": "Couple", "timings": "Extended Hours", "guestAccess": "Allowed at ₹200/visit" },
+                    { "facilities": "Gym + Swimming Pool", "packageType": "Family", "timings": "All Day Access", "guestAccess": "2 Free passes/month" }
+                ]
+            },
+            {
+                "id": 2,
+                "options": [
+                    { "facilities": "Badminton Court Only", "packageType": "Family", "timings": "All Day Access", "guestAccess": "Allowed at ₹200/visit" },
+                    { "facilities": "Gym + Badminton Court", "packageType": "Individual", "timings": "Morning & Evening Only", "guestAccess": "2 Free passes/month" },
+                    { "facilities": "Swimming Pool + Badminton Court", "packageType": "Couple", "timings": "Extended Hours", "guestAccess": "Not Allowed" }
+                ]
+            },
+            {
+                "id": 3,
+                "options": [
+                    { "facilities": "Gym + Swimming Pool", "packageType": "Couple", "timings": "Extended Hours", "guestAccess": "Not Allowed" },
+                    { "facilities": "All Facilities", "packageType": "Individual", "timings": "All Day Access", "guestAccess": "2 Free passes/month" },
+                    { "facilities": "Gym Only", "packageType": "Family", "timings": "Morning & Evening Only", "guestAccess": "Allowed at ₹200/visit" }
+                ]
+            },
+            {
+                "id": 4,
+                "options": [
+                    { "facilities": "Swimming Pool Only", "packageType": "Individual", "timings": "All Day Access", "guestAccess": "2 Free passes/month" },
+                    { "facilities": "Gym + Swimming Pool + Badminton", "packageType": "Couple", "timings": "Morning & Evening Only", "guestAccess": "Not Allowed" },
+                    { "facilities": "Badminton Court Only", "packageType": "Family", "timings": "Extended Hours", "guestAccess": "Allowed at ₹200/visit" }
+                ]
+            },
+            {
+                "id": 5,
+                "options": [
+                    { "facilities": "Gym + Badminton Court", "packageType": "Family", "timings": "Morning & Evening Only", "guestAccess": "Allowed at ₹200/visit" },
+                    { "facilities": "Swimming Pool Only", "packageType": "Individual", "timings": "Extended Hours", "guestAccess": "Not Allowed" },
+                    { "facilities": "All Facilities", "packageType": "Couple", "timings": "All Day Access", "guestAccess": "2 Free passes/month" }
+                ]
+            },
+            {
+                "id": 6,
+                "options": [
+                    { "facilities": "All Facilities", "packageType": "Individual", "timings": "Extended Hours", "guestAccess": "Allowed at ₹200/visit" },
+                    { "facilities": "Gym + Swimming Pool", "packageType": "Family", "timings": "All Day Access", "guestAccess": "Not Allowed" },
+                    { "facilities": "Swimming Pool + Badminton Court", "packageType": "Couple", "timings": "Morning & Evening Only", "guestAccess": "2 Free passes/month" }
+                ]
+            },
+            {
+                "id": 7,
+                "options": [
+                    { "facilities": "Gym Only", "packageType": "Couple", "timings": "All Day Access", "guestAccess": "2 Free passes/month" },
+                    { "facilities": "Badminton Court Only", "packageType": "Individual", "timings": "Morning & Evening Only", "guestAccess": "Allowed at ₹200/visit" },
+                    { "facilities": "Gym + Swimming Pool + Badminton", "packageType": "Family", "timings": "Extended Hours", "guestAccess": "Not Allowed" }
+                ]
+            },
+            {
+                "id": 8,
+                "options": [
+                    { "facilities": "Swimming Pool + Badminton Court", "packageType": "Family", "timings": "Morning & Evening Only", "guestAccess": "Not Allowed" },
+                    { "facilities": "Gym + Badminton Court", "packageType": "Couple", "timings": "All Day Access", "guestAccess": "Allowed at ₹200/visit" },
+                    { "facilities": "All Facilities", "packageType": "Individual", "timings": "Extended Hours", "guestAccess": "2 Free passes/month" }
+                ]
+            },
+            {
+                "id": 9,
+                "options": [
+                    { "facilities": "Gym + Swimming Pool", "packageType": "Individual", "timings": "Extended Hours", "guestAccess": "2 Free passes/month" },
+                    { "facilities": "Gym Only", "packageType": "Family", "timings": "All Day Access", "guestAccess": "Not Allowed" },
+                    { "facilities": "Swimming Pool Only", "packageType": "Couple", "timings": "Morning & Evening Only", "guestAccess": "Allowed at ₹200/visit" }
+                ]
+            },
+            {
+                "id": 10,
+                "options": [
+                    { "facilities": "Badminton Court Only", "packageType": "Couple", "timings": "Extended Hours", "guestAccess": "Not Allowed" },
+                    { "facilities": "Gym + Swimming Pool + Badminton", "packageType": "Individual", "timings": "All Day Access", "guestAccess": "Allowed at ₹200/visit" },
+                    { "facilities": "Gym + Badminton Court", "packageType": "Family", "timings": "Morning & Evening Only", "guestAccess": "2 Free passes/month" }
+                ]
+            },
+            {
+                "id": 11,
+                "options": [
+                    { "facilities": "All Facilities", "packageType": "Family", "timings": "All Day Access", "guestAccess": "Not Allowed" },
+                    { "facilities": "Swimming Pool + Badminton Court", "packageType": "Individual", "timings": "Morning & Evening Only", "guestAccess": "Allowed at ₹200/visit" },
+                    { "facilities": "Gym Only", "packageType": "Couple", "timings": "Extended Hours", "guestAccess": "2 Free passes/month" }
+                ]
+            },
+            {
+                "id": 12,
+                "options": [
+                    { "facilities": "Gym + Swimming Pool", "packageType": "Couple", "timings": "Morning & Evening Only", "guestAccess": "Allowed at ₹200/visit" },
+                    { "facilities": "Badminton Court Only", "packageType": "Family", "timings": "Extended Hours", "guestAccess": "2 Free passes/month" },
+                    { "facilities": "Swimming Pool Only", "packageType": "Individual", "timings": "All Day Access", "guestAccess": "Not Allowed" }
+                ]
+            },
+            {
+                "id": 13,
+                "options": [
+                    { "facilities": "Gym + Badminton Court", "packageType": "Individual", "timings": "All Day Access", "guestAccess": "2 Free passes/month" },
+                    { "facilities": "All Facilities", "packageType": "Couple", "timings": "Morning & Evening Only", "guestAccess": "Not Allowed" },
+                    { "facilities": "Gym + Swimming Pool + Badminton", "packageType": "Family", "timings": "Extended Hours", "guestAccess": "Allowed at ₹200/visit" }
+                ]
+            },
+            {
+                "id": 14,
+                "options": [
+                    { "facilities": "Swimming Pool Only", "packageType": "Family", "timings": "Extended Hours", "guestAccess": "Not Allowed" },
+                    { "facilities": "Gym Only", "packageType": "Individual", "timings": "All Day Access", "guestAccess": "Allowed at ₹200/visit" },
+                    { "facilities": "Swimming Pool + Badminton Court", "packageType": "Couple", "timings": "Morning & Evening Only", "guestAccess": "2 Free passes/month" }
+                ]
+            },
+            {
+                "id": 15,
+                "options": [
+                    { "facilities": "Gym + Swimming Pool + Badminton", "packageType": "Couple", "timings": "All Day Access", "guestAccess": "Not Allowed" },
+                    { "facilities": "Gym + Swimming Pool", "packageType": "Individual", "timings": "Morning & Evening Only", "guestAccess": "2 Free passes/month" },
+                    { "facilities": "Badminton Court Only", "packageType": "Family", "timings": "Extended Hours", "guestAccess": "Allowed at ₹200/visit" }
+                ]
+            },
+            {
+                "id": 16,
+                "options": [
+                    { "facilities": "All Facilities", "packageType": "Individual", "timings": "Morning & Evening Only", "guestAccess": "Not Allowed" },
+                    { "facilities": "Gym + Badminton Court", "packageType": "Couple", "timings": "Extended Hours", "guestAccess": "Allowed at ₹200/visit" },
+                    { "facilities": "Swimming Pool Only", "packageType": "Family", "timings": "All Day Access", "guestAccess": "2 Free passes/month" }
+                ]
+            }
+        ];
+
+        // Main App Component
+        function RSVSurveyApp() {
+            const [currentStep, setCurrentStep] = useState(0);
+            const [formData, setFormData] = useState({
+                name: '',
+                email: '',
+                phone: '',
+                location: '',
+                hasCompetitor: '',
+                competitorName: '',
+                competitorDistance: '',
+                competitorMember: '',
+                choices: {}
+            });
+            const [alert, setAlert] = useState(null);
+            const [isSubmitting, setIsSubmitting] = useState(false);
+
+            const steps = ['Personal Info', 'Competitor', 'Preferences', 'Review'];
+
+            const showAlert = (message, type) => {
+                setAlert({ message, type });
+                setTimeout(() => setAlert(null), 4000);
+            };
+
+            const getProgress = () => {
+                const choicesCompleted = Object.keys(formData.choices).length;
+                return Math.round((choicesCompleted / CHOICE_SETS.length) * 100);
+            };
+
+            const handleNext = () => {
+                if (currentStep === 0) {
+                    if (!formData.name || !formData.email) {
+                        showAlert('Please fill in your name and email', 'error');
+                        return;
+                    }
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailRegex.test(formData.email)) {
+                        showAlert('Please enter a valid email address', 'error');
+                        return;
+                    }
+                }
+                
+                if (currentStep === 1) {
+                    if (!formData.hasCompetitor) {
+                        showAlert('Please answer the competitor question', 'error');
+                        return;
+                    }
+                }
+
+                if (currentStep < steps.length - 1) {
+                    setCurrentStep(currentStep + 1);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            };
+
+            const handlePrevious = () => {
+                if (currentStep > 0) {
+                    setCurrentStep(currentStep - 1);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            };
+
+            const handleSubmit = () => {
+                if (Object.keys(formData.choices).length < CHOICE_SETS.length) {
+                    showAlert(`Please complete all ${CHOICE_SETS.length} choice sets`, 'error');
+                    return;
+                }
+
+                setIsSubmitting(true);
+
+                // Generate email
+                const emailBody = generateEmailBody();
+                const subject = encodeURIComponent(`RSV Club House Survey - ${formData.name}`);
+                const mailto = `mailto:rsvowa.562106@gmail.com?subject=${subject}&body=${encodeURIComponent(emailBody)}`;
+
+                // Save to localStorage
+                const responseData = {
+                    ...formData,
+                    timestamp: new Date().toISOString()
+                };
+                localStorage.setItem('rsv_survey_' + Date.now(), JSON.stringify(responseData));
+
+                // Open email
+                window.location.href = mailto;
+
+                setTimeout(() => {
+                    setIsSubmitting(false);
+                    setCurrentStep(steps.length);
+                    showAlert('Thank you! Your email client should open now.', 'success');
+                }, 1000);
+            };
+
+            const generateEmailBody = () => {
+                let body = `RSV CLUB HOUSE SURVEY RESPONSE\n========================================\n\n`;
+                body += `RESPONDENT INFORMATION:\n`;
+                body += `- Name: ${formData.name}\n`;
+                body += `- Email: ${formData.email}\n`;
+                body += `- Phone: ${formData.phone || 'Not provided'}\n`;
+                body += `- Location: ${formData.location || 'Not provided'}\n`;
+                body += `- Submission Time: ${new Date().toLocaleString()}\n\n`;
+
+                body += `COMPETITOR ANALYSIS:\n`;
+                body += `- Has nearby competitors: ${formData.hasCompetitor}\n`;
+                body += `- Competitor name: ${formData.competitorName || 'N/A'}\n`;
+                body += `- Distance: ${formData.competitorDistance || 'N/A'}\n`;
+                body += `- Current member: ${formData.competitorMember || 'N/A'}\n\n`;
+
+                body += `CHOICE PREFERENCES:\n========================================\n`;
+
+                CHOICE_SETS.forEach(set => {
+                    const choice = formData.choices[set.id];
+                    body += `\nChoice Set ${set.id}: ${choice}\n`;
+                    
+                    if (choice !== 'None') {
+                        const optionIndex = choice.charCodeAt(0) - 65;
+                        const option = set.options[optionIndex];
+                        const price = PRICING[option.facilities];
+                        body += `  - Facilities: ${option.facilities}\n`;
+                        body += `  - Package: ${option.packageType}\n`;
+                        body += `  - Timings: ${option.timings}\n`;
+                        body += `  - Guest Access: ${option.guestAccess}\n`;
+                        body += `  - Price: ₹${price}/month\n`;
+                    }
+                });
+
+                return body;
+            };
+
+            const renderScreen = () => {
+                switch (currentStep) {
+                    case 0:
+                        return <PersonalInfoScreen formData={formData} setFormData={setFormData} />;
+                    case 1:
+                        return <CompetitorScreen formData={formData} setFormData={setFormData} />;
+                    case 2:
+                        return <PreferencesScreen formData={formData} setFormData={setFormData} />;
+                    case 3:
+                        return <ReviewScreen formData={formData} />;
+                    default:
+                        return <SuccessScreen />;
+                }
+            };
+
+            return (
+                <div className="app-container">
+                    <div className="app-header">
+                        <h1>🏊‍♂️ RSV Club House Survey</h1>
+                        <p>Help us understand your membership preferences</p>
+                    </div>
+
+                    {currentStep < steps.length && (
+                        <>
+                            <div className="nav-steps">
+                                {steps.map((step, index) => (
+                                    <div 
+                                        key={index}
+                                        className={`step ${index === currentStep ? 'active' : ''} ${index < currentStep ? 'completed' : ''}`}
+                                        onClick={() => index < currentStep && setCurrentStep(index)}
+                                    >
+                                        <div className="step-number">
+                                            {index < currentStep ? '✓' : index + 1}
+                                        </div>
+                                        <div className="step-label">{step}</div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {currentStep === 2 && (
+                                <div className="progress-container">
+                                    <div className="progress-text">
+                                        {Object.keys(formData.choices).length} of {CHOICE_SETS.length} choice sets completed
+                                    </div>
+                                    <div className="progress-bar-container">
+                                        <div className="progress-bar" style={{ width: `${getProgress()}%` }}></div>
+                                    </div>
+                                </div>
+                            )}
+                        </>
+                    )}
+
+                    <div className="content">
+                        {alert && (
+                            <div className={`alert alert-${alert.type} animate-slide-in`}>
+                                <span>{alert.type === 'success' ? '✓' : alert.type === 'error' ? '⚠' : 'ℹ'}</span>
+                                <span>{alert.message}</span>
+                            </div>
+                        )}
+
+                        <div className="screen animate-slide-in">
+                            {renderScreen()}
+
+                            {currentStep < steps.length && (
+                                <div className="btn-container">
+                                    {currentStep > 0 && (
+                                        <button className="btn btn-secondary" onClick={handlePrevious}>
+                                            ← Previous
+                                        </button>
+                                    )}
+                                    {currentStep < steps.length - 1 ? (
+                                        <button className="btn btn-primary" onClick={handleNext}>
+                                            Next →
+                                        </button>
+                                    ) : (
+                                        <button 
+                                            className="btn btn-primary" 
+                                            onClick={handleSubmit}
+                                            disabled={isSubmitting}
+                                        >
+                                            {isSubmitting ? (
+                                                <>
+                                                    <div className="spinner"></div>
+                                                    Submitting...
+                                                </>
+                                            ) : (
+                                                <>Submit Survey ✓</>
+                                            )}
+                                        </button>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Personal Info Screen
+        function PersonalInfoScreen({ formData, setFormData }) {
+            return (
+                <div>
+                    <h2 style={{ marginBottom: '20px', color: '#2d3748' }}>📋 Your Information</h2>
+                    
+                    <div className="form-group">
+                        <label className="form-label">Full Name *</label>
+                        <input 
+                            type="text"
+                            className="form-input"
+                            placeholder="Enter your full name"
+                            value={formData.name}
+                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        />
+                    </div>
+
+                    <div className="form-group">
+                        <label className="form-label">Email Address *</label>
+                        <input 
+                            type="email"
+                            className="form-input"
+                            placeholder="your.email@example.com"
+                            value={formData.email}
+                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        />
+                    </div>
+
+                    <div className="form-group">
+                        <label className="form-label">Phone Number</label>
+                        <input 
+                            type="tel"
+                            className="form-input"
+                            placeholder="+91 XXXXX XXXXX"
+                            value={formData.phone}
+                            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        />
+                    </div>
+
+                    <div className="form-group">
+                        <label className="form-label">Your Location</label>
+                        <input 
+                            type="text"
+                            className="form-input"
+                            placeholder="e.g., HSR Layout, Bangalore"
+                            value={formData.location}
+                            onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                        />
+                    </div>
+
+                    <div className="info-box">
+                        <div className="info-box-title">
+                            🔒 Privacy Note
+                        </div>
+                        <div className="info-box-content">
+                            Your information will be used only for this survey and kept confidential.
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Competitor Screen
+        function CompetitorScreen({ formData, setFormData }) {
+            return (
+                <div>
+                    <h2 style={{ marginBottom: '20px', color: '#2d3748' }}>🏢 Competitor Analysis</h2>
+                    
+                    <div className="competitor-box">
+                        <h3 style={{ marginBottom: '15px', color: '#c53030' }}>
+                            Do you have access to other club houses within 1 km or nearby?
+                        </h3>
+
+                        <div className="radio-group">
+                            {['yes', 'no', 'not_sure'].map(value => (
+                                <div 
+                                    key={value}
+                                    className={`radio-option ${formData.hasCompetitor === value ? 'selected' : ''}`}
+                                    onClick={() => setFormData({ ...formData, hasCompetitor: value })}
+                                >
+                                    <input 
+                                        type="radio"
+                                        checked={formData.hasCompetitor === value}
+                                        onChange={() => {}}
+                                    />
+                                    <span>
+                                        {value === 'yes' && '✓ Yes, I have access to other club houses'}
+                                        {value === 'no' && '✗ No, RSV is the only option nearby'}
+                                        {value === 'not_sure' && '? Not sure / Need to check'}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {formData.hasCompetitor === 'yes' && (
+                        <div className="animate-fade-in">
+                            <div className="form-group">
+                                <label className="form-label">Name of the club house(s)</label>
+                                <input 
+                                    type="text"
+                                    className="form-input"
+                                    placeholder="e.g., XYZ Club, ABC Sports Complex"
+                                    value={formData.competitorName}
+                                    onChange={(e) => setFormData({ ...formData, competitorName: e.target.value })}
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label className="form-label">Approximate distance from your home</label>
+                                <select 
+                                    className="form-select"
+                                    value={formData.competitorDistance}
+                                    onChange={(e) => setFormData({ ...formData, competitorDistance: e.target.value })}
+                                >
+                                    <option value="">Select distance</option>
+                                    <option value="less_500m">Less than 500 meters</option>
+                                    <option value="500m_1km">500 meters - 1 km</option>
+                                    <option value="1km_2km">1 - 2 km</option>
+                                    <option value="2km_plus">More than 2 km</option>
+                                </select>
+                            </div>
+
+                            <div className="form-group">
+                                <label className="form-label">Are you currently a member there?</label>
+                                <div className="radio-group">
+                                    {[
+                                        { value: 'yes', label: '✓ Yes, I\'m a current member' },
+                                        { value: 'was', label: '⏱ Was a member before' },
+                                        { value: 'no', label: '✗ No, never been a member' }
+                                    ].map(option => (
+                                        <div 
+                                            key={option.value}
+                                            className={`radio-option ${formData.competitorMember === option.value ? 'selected' : ''}`}
+                                            onClick={() => setFormData({ ...formData, competitorMember: option.value })}
+                                        >
+                                            <input 
+                                                type="radio"
+                                                checked={formData.competitorMember === option.value}
+                                                onChange={() => {}}
+                                            />
+                                            <span>{option.label}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    <div className="info-box">
+                        <div className="info-box-title">
+                            💡 Why we ask
+                        </div>
+                        <div className="info-box-content">
+                            Understanding your access to alternatives helps us gauge the importance of having RSV Club House nearby and tailor our offerings better.
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Preferences Screen
+        function PreferencesScreen({ formData, setFormData }) {
+            const [currentChoiceSet, setCurrentChoiceSet] = useState(0);
+
+            const handleChoice = (choiceSetId, option) => {
+                setFormData({
+                    ...formData,
+                    choices: {
+                        ...formData.choices,
+                        [choiceSetId]: option
+                    }
+                });
+            };
+
+            const currentSet = CHOICE_SETS[currentChoiceSet];
+            const selectedOption = formData.choices[currentSet.id];
+
+            const goToNext = () => {
+                if (currentChoiceSet < CHOICE_SETS.length - 1) {
+                    setCurrentChoiceSet(currentChoiceSet + 1);
+                    window.scrollTo({ top: 200, behavior: 'smooth' });
+                }
+            };
+
+            const goToPrevious = () => {
+                if (currentChoiceSet > 0) {
+                    setCurrentChoiceSet(currentChoiceSet - 1);
+                    window.scrollTo({ top: 200, behavior: 'smooth' });
+                }
+            };
+
+            return (
+                <div>
+                    <div className="choice-set-header">
+                        <h2>Choice Set {currentSet.id} of 16</h2>
+                        <p>Select your preferred membership option</p>
+                    </div>
+
+                    <div className="options-container">
+                        {currentSet.options.map((option, index) => {
+                            const optionLetter = String.fromCharCode(65 + index);
+                            const price = PRICING[option.facilities];
+                            const isSelected = selectedOption === optionLetter;
+
+                            return (
+                                <div 
+                                    key={index}
+                                    className={`option-card ${isSelected ? 'selected' : ''}`}
+                                    onClick={() => handleChoice(currentSet.id, optionLetter)}
+                                >
+                                    <div className="option-badge">{optionLetter}</div>
+                                    
+                                    <div className="option-detail">
+                                        <span className="option-detail-label">🏋️ Facilities:</span>
+                                        <span className="option-detail-value">{option.facilities}</span>
+                                    </div>
+
+                                    <div className="option-detail">
+                                        <span className="option-detail-label">👥 Package Type:</span>
+                                        <span className="option-detail-value">{option.packageType}</span>
+                                    </div>
+
+                                    <div className="option-detail">
+                                        <span className="option-detail-label">⏰ Timings:</span>
+                                        <span className="option-detail-value">{option.timings}</span>
+                                    </div>
+
+                                    <div className="option-detail">
+                                        <span className="option-detail-label">🎫 Guest Access:</span>
+                                        <span className="option-detail-value">{option.guestAccess}</span>
+                                    </div>
+
+                                    <div className="price-badge">₹{price}/month</div>
+                                </div>
+                            );
+                        })}
+                    </div>
+
+                    <div 
+                        className={`none-option ${selectedOption === 'None' ? 'selected' : ''}`}
+                        onClick={() => handleChoice(currentSet.id, 'None')}
+                    >
+                        <input 
+                            type="radio"
+                            checked={selectedOption === 'None'}
+                            onChange={() => {}}
+                            style={{ marginRight: '10px' }}
+                        />
+                        <strong>None of these options appeal to me</strong>
+                    </div>
+
+                    <div className="btn-container" style={{ marginTop: '20px' }}>
+                        <button 
+                            className="btn btn-secondary"
+                            onClick={goToPrevious}
+                            disabled={currentChoiceSet === 0}
+                        >
+                            ← Previous Set
+                        </button>
+                        <button 
+                            className="btn btn-primary"
+                            onClick={goToNext}
+                            disabled={currentChoiceSet === CHOICE_SETS.length - 1}
+                        >
+                            Next Set →
+                        </button>
+                    </div>
+                </div>
+            );
+        }
+
+        // Review Screen
+        function ReviewScreen({ formData }) {
+            const completedChoices = Object.keys(formData.choices).length;
+            const allComplete = completedChoices === CHOICE_SETS.length;
+
+            return (
+                <div>
+                    <h2 style={{ marginBottom: '20px', color: '#2d3748' }}>✓ Review Your Responses</h2>
+                    
+                    <div className="info-box">
+                        <div className="info-box-title">📋 Personal Information</div>
+                        <div className="info-box-content">
+                            <strong>Name:</strong> {formData.name}<br />
+                            <strong>Email:</strong> {formData.email}<br />
+                            {formData.phone && <><strong>Phone:</strong> {formData.phone}<br /></>}
+                            {formData.location && <><strong>Location:</strong> {formData.location}</>}
+                        </div>
+                    </div>
+
+                    <div className="competitor-box">
+                        <div className="info-box-title">🏢 Competitor Analysis</div>
+                        <div className="info-box-content" style={{ color: '#742a2a' }}>
+                            <strong>Has Competitors:</strong> {formData.hasCompetitor}<br />
+                            {formData.competitorName && <><strong>Name:</strong> {formData.competitorName}<br /></>}
+                            {formData.competitorDistance && <><strong>Distance:</strong> {formData.competitorDistance}<br /></>}
+                            {formData.competitorMember && <><strong>Member Status:</strong> {formData.competitorMember}</>}
+                        </div>
+                    </div>
+
+                    <div className="info-box">
+                        <div className="info-box-title">💡 Choice Preferences</div>
+                        <div className="info-box-content">
+                            <strong>Completed:</strong> {completedChoices} of {CHOICE_SETS.length} choice sets
+                            {!allComplete && (
+                                <div style={{ color: '#c53030', marginTop: '10px' }}>
+                                    ⚠️ Please complete all choice sets before submitting
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {allComplete && (
+                        <div className="alert alert-success" style={{ marginTop: '20px' }}>
+                            <span>✓</span>
+                            <span>All set! Click Submit to send your responses.</span>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        // Success Screen
+        function SuccessScreen() {
+            return (
+                <div className="success-screen">
+                    <div className="success-icon">🎉</div>
+                    <h2>Thank You!</h2>
+                    <p>Your survey response has been prepared.</p>
+                    <p style={{ marginTop: '15px' }}>
+                        Your email client should have opened with the complete survey data.
+                        Please click Send to complete your submission.
+                    </p>
+                    <p style={{ marginTop: '15px', fontSize: '0.95em', color: '#718096' }}>
+                        If the email didn't open, please contact us at:<br />
+                        <strong>rsvowa.562106@gmail.com</strong>
+                    </p>
+                    <button 
+                        className="btn btn-primary" 
+                        style={{ marginTop: '30px', maxWidth: '300px' }}
+                        onClick={() => window.location.reload()}
+                    >
+                        Start New Survey
+                    </button>
+                </div>
+            );
+        }
+
+        // Render App
+        ReactDOM.render(<RSVSurveyApp />, document.getElementById('root'));
+
+        // Register service worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js')
+                .then(reg => console.log('Service Worker registered'))
+                .catch(err => console.log('Service Worker registration failed'));
+        }
+    </script>
+</body>
+</html>
